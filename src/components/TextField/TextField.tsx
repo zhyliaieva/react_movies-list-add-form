@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 
 type Props = {
-  className?: string;
+  className: string;
   name: string;
   value: string;
   label?: string;

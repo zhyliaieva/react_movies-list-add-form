@@ -50,7 +50,7 @@ export const NewMovie: React.FC<NewMovieProps> = ({ onAdd }) => {
   }
 
   function validateUrl(value: string) {
-    if (!value) {
+    if (!value.trim()) {
       return 'Url is required';
     }
 
@@ -62,7 +62,7 @@ export const NewMovie: React.FC<NewMovieProps> = ({ onAdd }) => {
   }
 
   function validateImdbId(value: string) {
-    if (!value.trim) {
+    if (!value.trim()) {
       return 'Imdb ID is required';
     }
 
