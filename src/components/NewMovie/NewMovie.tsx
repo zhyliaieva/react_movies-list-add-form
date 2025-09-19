@@ -4,12 +4,22 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import classNames from 'classnames';
 
-export const NewMovie = () => {
+interface Movie {
+  title: string;
+  description: string;
+  imgUrl: string;
+  imdbUrl: string;
+  imdbId: string;
+}
+interface NewMovieProps {
+  onAdd: (newMovie: Movie) => void;
+}
+
+export const NewMovie: React.FC<NewMovieProps> = ({ onAdd }) => {
   // Increase the count after successful form submission
   // to reset touched status of all the `Field`s
   const [titleError, setTitleError] = React.useState('');
   const [imgUrlError, setImgUrlError] = React.useState('');
-  const [descriptionError, setDescriptionError] = React.useState('');
   const [imdbUrlError, setImdbUrlError] = React.useState('');
   const [imdbIdError, setImdbIdError] = React.useState('');
 
@@ -32,7 +42,7 @@ export const NewMovie = () => {
   );
 
   function validateTitle(value: string) {
-    if (!value) {
+    if (!value.trim()) {
       return 'Title is required';
     }
 
@@ -51,29 +61,9 @@ export const NewMovie = () => {
     return '';
   }
 
-  function validateImdbUrl(value: string) {
-    if (!value) {
-      return 'Imdb Url is required';
-    }
-
-    if (!urlPattern.test(value.trim())) {
-      return 'Please enter a valid Imdb URL';
-    }
-
-    return '';
-  }
-
   function validateImdbId(value: string) {
-    if (!value) {
+    if (!value.trim) {
       return 'Imdb ID is required';
-    }
-
-    return '';
-  }
-
-  function validateDescription(value: string) {
-    if (!value) {
-      return 'Description is required';
     }
 
     return '';
@@ -86,7 +76,6 @@ export const NewMovie = () => {
 
   const handleDescriptionChange = (newValue: string) => {
     setDescription(newValue);
-    setDescriptionError('');
   };
 
   const handleImgUrlChange = (newValue: string) => {
@@ -96,20 +85,19 @@ export const NewMovie = () => {
 
   const handleImdbUrlChange = (newValue: string) => {
     setImdbUrl(newValue);
-    setImgUrlError('');
+    setImdbUrlError('');
   };
 
   const handleImdbIdChange = (newValue: string) => {
     setImdbId(newValue);
-    setImgUrlError('');
+    setImdbIdError('');
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const titleErrorValue = validateTitle(title);
     const imgUrlErrorValue = validateUrl(imgUrl);
-    const descriptionErrorValue = validateDescription(description);
-    const imdbUrlErrorValue = validateImdbUrl(imdbUrl);
+    const imdbUrlErrorValue = validateUrl(imdbUrl);
     const imdbIdErrorValue = validateImdbId(imdbId);
 
     setImdbUrlError(imdbUrlErrorValue);
@@ -117,19 +105,29 @@ export const NewMovie = () => {
 
     setTitleError(titleErrorValue);
     setImgUrlError(imgUrlErrorValue);
-    setDescriptionError(descriptionErrorValue);
+
     if (
       titleErrorValue ||
       imgUrlErrorValue ||
-      descriptionErrorValue ||
       imdbUrlErrorValue ||
       imdbIdErrorValue
     ) {
       return;
     }
+
+    // Call the onAdd prop with the new movie data
+    const newMovie: Movie = {
+      title: title.trim(),
+      description: description.trim(),
+      imgUrl: imgUrl.trim(),
+      imdbUrl: imdbUrl.trim(),
+      imdbId: imdbId.trim(),
+    };
+
+    onAdd(newMovie);
+
     alert('Movie added!');
     // Clear the form
-
     setTitle('');
     setDescription('');
     setImgUrl('');
@@ -137,10 +135,8 @@ export const NewMovie = () => {
     setImdbId('');
     setTitleError('');
     setImgUrlError('');
-    setDescriptionError('');
     setImdbUrlError('');
     setImdbIdError('');
-
     setCount(count + 1);
   };
 
@@ -160,13 +156,12 @@ export const NewMovie = () => {
       />
 
       <TextField
-        className={classNames('input', { 'is-danger': descriptionError })}
+        className="input"
         name="description"
         label="Description"
         placeholder="Enter Description"
         value={description}
         onChange={handleDescriptionChange}
-
       />
 
       <TextField
@@ -187,7 +182,7 @@ export const NewMovie = () => {
         value={imdbUrl}
         onChange={handleImdbUrlChange}
         required
-        onBlur={() => setImdbUrlError(validateImdbUrl(imdbUrl))}
+        onBlur={() => setImdbUrlError(validateUrl(imdbUrl))}
       />
 
       <TextField
@@ -203,8 +198,6 @@ export const NewMovie = () => {
 
       {titleError && <p className="help is-danger">{titleError}</p>}
       {imgUrlError && <p className="help is-danger">{imgUrlError}</p>}
-
-      {descriptionError && <p className="help is-danger">{descriptionError}</p>}
       {imdbUrlError && <p className="help is-danger">{imdbUrlError}</p>}
       {imdbIdError && <p className="help is-danger">{imdbIdError}</p>}
 
